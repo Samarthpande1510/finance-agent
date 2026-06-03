@@ -10,3 +10,4 @@ backend/.venv/
 
 # Local python version managers (Optional, but recommended)
 backend/.python-version
+backend/uv.lock

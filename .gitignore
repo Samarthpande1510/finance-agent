@@ -1,0 +1,12 @@
+# Secrets and environment variables (CRITICAL)
+backend/.env
+
+# Local Python virtual environments
+backend/.venv/
+
+# Python cache files
+**/__pycache__/
+**/*.pyc
+
+# Local python version managers (Optional, but recommended)
+backend/.python-version

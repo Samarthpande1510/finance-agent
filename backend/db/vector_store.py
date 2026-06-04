@@ -53,29 +53,6 @@ def search(user_id: int, query_vector: list[float], limit: int = 5) -> list[dict
     )
     return [{"transaction_id": r.id, "score": r.score, "text": r.payload["text"]} for r in results.points]
 
-
 if __name__ == "__main__":
     init_collection()
-    print("Collection ready")
-    
 
-
-for i, row in data.iterrows():
-    vec = get_embedding(row["description"])
-    store_embedding(i + 2, 1, row["description"], vec)
-
-print("Stored all transactions")
-
-
-queries = [
-    "food delivery",
-    "luxury shopping",
-    "cab ride",
-    "electronics"
-]
-for q in queries:
-    query_vec = get_embedding(q, is_query=True)
-    results = search(1, query_vec, limit=3)
-    print(f"\n'{q}' →")
-    for r in results:
-        print(f"  {r['text']} (score: {r['score']:.3f})")

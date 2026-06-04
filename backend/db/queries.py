@@ -18,6 +18,21 @@ def get_transactions(db: Session,user_id: int, start_date: str, end_date: str) -
     }
     for t in transaction
 ]
+def get_transactions_by_ids(db: Session, user_id: int, ids: list[int]) -> list[dict]:
+    transactions = db.query(Transaction).filter(
+        Transaction.user_id == user_id,
+        Transaction.id.in_(ids)
+    ).all()
+    return [
+        {
+            "id": t.id,
+            "raw_description": t.raw_description,
+            "agent_category": t.agent_category,
+            "amount": float(t.amount),
+            "date": str(t.date)
+        }
+        for t in transactions
+    ]
 
 def categorize_transaction(db: Session, user_id: int, description: str, amount: float, category: str) -> dict:
     transaction = db.query(Transaction).filter(
@@ -96,6 +111,7 @@ def search_spending_history(db: Session, user_id: int, query: str):
         return []
     match =[]
     for t in transaction:
+        
         if (query in (t.raw_description or "").lower() or 
             query in (t.agent_category or "").lower()):
             match.append({

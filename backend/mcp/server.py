@@ -6,7 +6,8 @@ import json
 from db.database import SessionLocal
 from db.queries import *
 from contextlib import contextmanager
-
+from db.vector_store import get_embedding, search as vector_search
+from db.queries import get_transactions_by_ids
 @contextmanager
 def get_db():
     db = SessionLocal()
@@ -108,9 +109,23 @@ async def call_tool(name: str, arguments: dict):
             return [TextContent(type="text", text=json.dumps(result))]
 
     elif name == "search_spending_history":
-         with get_db() as db:
-            result = search_spending_history(db, **arguments)
-            return [TextContent(type="text", text=json.dumps(result))]
+        query_vector = get_embedding(arguments["query"], is_query=True)
+        qdrant_results = vector_search(arguments["user_id"], query_vector,limit = 7)
+
+        if not qdrant_results:
+            return [TextContent(type="text", text=json.dumps([]))]
+        
+        ids = [r["transaction_id"] for r in qdrant_results]
+        with get_db() as db:
+            transactions = get_transactions_by_ids(db, arguments["user_id"], ids)
+        
+        score_map = {r["transaction_id"]: r["score"] for r in qdrant_results}
+        for t in transactions:
+            t["score"] = score_map.get(t["id"], 0)
+        
+        result = sorted(transactions, key=lambda x: x["score"], reverse=True)
+        return [TextContent(type="text", text=json.dumps(result))]
+
 
     else:
         raise ValueError(f"Unknown tool: {name}")

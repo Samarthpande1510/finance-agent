@@ -26,27 +26,11 @@ async def list_tools():
 
 if __name__ == "__main__":
     async def test():
-        list = await list_tools()
-        print("List",list)
-
-        result = await call_tool("get_transactions", {
+        result = await call_tool("search_spending_history", {
             "user_id": 1,
-            "start_date": "2024-03-01",
-            "end_date": "2024-05-31"
+            "query": "food delivery"
         })
-        print("TRANSACTIONS:", result)
-
-        result = await call_tool("detect_anomalies", {
-            "user_id": 1
-        })
-        print("ANOMALIES:", result)
-
-        result = await call_tool("get_spending_summary", {
-            "user_id": 1,
-            "start_date": "2024-03-01",
-            "end_date": "2024-05-31"
-        })
-        print("SUMMARY:", result)
+        print("SEARCH:", result)
 
     asyncio.run(test())
 

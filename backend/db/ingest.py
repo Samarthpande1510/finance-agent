@@ -22,9 +22,9 @@ def ingest_csv(file_path: str,user_id: int) -> dict:
             db.add(transaction)
             db.flush()
 
-            vector = get_embedding(row["description"])
-
-            store_embedding(transaction.id,user_id,row["description"],vector)
+            text = f"{row['description']} amount {row['amount']} date {row['date']}"
+            vector = get_embedding(text)
+            store_embedding(transaction.id, user_id, text, vector)
 
             count +=1
         

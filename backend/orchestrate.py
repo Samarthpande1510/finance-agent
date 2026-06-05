@@ -1,7 +1,7 @@
 import os
 import openai
 from dotenv import load_dotenv
-
+from utils.reliability import retry
 load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
@@ -26,7 +26,7 @@ VALID_INTENTS = {
 
 def route(intent: str) -> list[str]:
         return SPECIALIST_ROUTES.get(intent, ["full_report"])
-
+@retry(max = 3)
 def classify_and_route(user_message: str) -> list[str]:
     
     prompt = """You are an intent classifier for a personal finance agent.

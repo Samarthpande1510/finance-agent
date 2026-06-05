@@ -7,7 +7,8 @@ import os
 server_params = StdioServerParameters(
     command="uv",
     args=["run", "mcp/server.py"],
-    env={**os.environ, "PYTHONPATH": "."}
+    env={**os.environ, "PYTHONPATH": "."},
+    read_timeout_seconds=30.0
 )
 
 async def call_tool(name: str, arguments: dict):
